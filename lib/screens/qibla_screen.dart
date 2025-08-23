@@ -79,7 +79,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
             else...
             [
               Text(
-                'Rotate your device to point towards the Kaabah.',
+                'Rotate your device to point towards the Kiblat.',
                 style: Theme.of(context).textTheme.bodyLarge,
                 textAlign: TextAlign.center,
               ),
@@ -87,7 +87,7 @@ class _QiblaScreenState extends State<QiblaScreen> {
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  // Compass background
+                  // Compass and
                   Image.asset(
                     'assets/compass_background.png', // Placeholder, you'd need to add this asset
                     width: 250,

@@ -24,7 +24,7 @@ class _PrayerTimesScreenState extends State<PrayerTimesScreen> {
       Provider.of<PrayerTimeProvider>(context, listen: false).fetchPrayerTimes();
     });
 
-    
+
     // In your PrayerTimesScreen, add this button for testing
 ElevatedButton(
   onPressed: () {

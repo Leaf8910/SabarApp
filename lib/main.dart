@@ -6,6 +6,8 @@ import 'package:go_router/go_router.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:myapp/firebase_options.dart';
 import 'package:myapp/screens/user_profile_setup_screen.dart';
+import 'package:myapp/screens/welcome_screen.dart';
+import 'package:myapp/screens/location_settings_screen.dart';
 import 'package:myapp/providers/theme_provider.dart';
 import 'package:myapp/theme/app_theme.dart';
 import 'package:myapp/screens/auth_screen.dart';
@@ -13,7 +15,11 @@ import 'package:myapp/screens/home_screen.dart';
 import 'package:myapp/screens/qibla_screen.dart';
 import 'package:myapp/screens/prayer_guidance_screen.dart';
 import 'package:myapp/screens/prayer_times_screen.dart';
+import 'package:myapp/screens/quran_verses_screen.dart';
 import 'package:myapp/providers/prayer_time_provider.dart';
+// Add these imports for sensor functionality
+import 'package:myapp/providers/sensor_provider.dart';
+import 'package:myapp/screens/sensor_dashboard_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,6 +32,7 @@ void main() async {
         ChangeNotifierProvider(create: (context) => ThemeProvider()),
         ChangeNotifierProvider(create: (context) => PrayerTimeProvider()),
         ChangeNotifierProvider(create: (context) => UserProfileProvider()),
+        ChangeNotifierProvider(create: (context) => SensorProvider()), // Add this line
         StreamProvider<User?>(
           create: (context) => FirebaseAuth.instance.authStateChanges(),
           initialData: null,
@@ -76,6 +83,12 @@ final GoRouter _router = GoRouter(
       },
     ),
     GoRoute(
+      path: '/welcome',
+      builder: (BuildContext context, GoRouterState state) {
+        return const WelcomeScreen();
+      },
+    ),
+    GoRoute(
       path: '/home',
       builder: (BuildContext context, GoRouterState state) {
         return const HomeScreen();
@@ -105,8 +118,26 @@ final GoRouter _router = GoRouter(
         return const UserProfileSetupScreen();
       },
     ),
+    GoRoute(
+      path: '/quran_verses',
+      builder: (BuildContext context, GoRouterState state) {
+        return const QuranVersesScreen();
+      },
+    ),
+    GoRoute(
+      path: '/location_settings',
+      builder: (BuildContext context, GoRouterState state) {
+        return const LocationSettingsScreen();
+      },
+    ),
+    // Add this route for the sensor dashboard
+    GoRoute(
+      path: '/sensors',
+      builder: (BuildContext context, GoRouterState state) {
+        return const SensorDashboardScreen();
+      },
+    ),
   ],
-  // COMPLETELY REMOVE redirect function to avoid GoRouter context issues
   errorBuilder: (context, state) => Scaffold(
     appBar: AppBar(title: const Text('Error')),
     body: Center(

@@ -28,10 +28,16 @@ android {
         applicationId = "com.example.myapp"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = flutter.minSdkVersion
+        
+        // FIXED: Override minSdk to 23 for Firebase compatibility
+        minSdk = 23  // Changed from flutter.minSdkVersion to 23
+        
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        
+        // Add multiDex support for Firebase
+        multiDexEnabled = true
     }
 
     buildTypes {
@@ -41,10 +47,26 @@ android {
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+    
+    // Add packaging options to handle potential conflicts
+    packagingOptions {
+        resources {
+            excludes += setOf(
+                "META-INF/DEPENDENCIES",
+                "META-INF/LICENSE",
+                "META-INF/LICENSE.txt",
+                "META-INF/NOTICE",
+                "META-INF/NOTICE.txt"
+            )
+        }
+    }
 }
 
 dependencies {
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.0.4")
+    
+    // Add multidex support
+    implementation("androidx.multidex:multidex:2.0.1")
 }
 
 flutter {

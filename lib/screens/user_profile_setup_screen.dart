@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:provider/provider.dart';
+import 'package:myapp/providers/user_profile_provider.dart';
+import 'package:myapp/providers/prayer_time_provider.dart';
 
 class UserProfileSetupScreen extends StatefulWidget {
   const UserProfileSetupScreen({super.key});
@@ -85,9 +89,30 @@ class _UserProfileSetupScreenState extends State<UserProfileSetupScreen> {
           .doc(user.uid)
           .set(profileData);
 
+      // Load the profile into the provider so the welcome screen can access the name
+      final userProfileProvider = Provider.of<UserProfileProvider>(context, listen: false);
+      await userProfileProvider.fetchUserProfile(user.uid);
+
+      // Set the user's country as the default location for prayer times
+      final prayerTimeProvider = Provider.of<PrayerTimeProvider>(context, listen: false);
+      if (_selectedCountry != null) {
+        await prayerTimeProvider.setSelectedCountry(_selectedCountry!);
+        // Set to country mode by default for new users
+        await prayerTimeProvider.setLocationMode(LocationMode.selectedCountry);
+      }
+
       if (mounted) {
-        // Navigate to home screen after successful profile creation
-        context.go('/home');
+        // Check if welcome screen should be shown
+        final prefs = await SharedPreferences.getInstance();
+        final hasSeenWelcome = prefs.getBool('welcome_seen') ?? false;
+        
+        if (!hasSeenWelcome) {
+          // Navigate to welcome screen for new users
+          context.go('/welcome');
+        } else {
+          // Navigate directly to home for returning users
+          context.go('/home');
+        }
         
         // Show success message
         ScaffoldMessenger.of(context).showSnackBar(
